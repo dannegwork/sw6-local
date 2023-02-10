@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 COPY conf /etc/nginx/
 COPY conf/sites-enabled /usr/local/bin/nginx/sites-enabled/
 
-WORKDIR /var/www/magento2
+WORKDIR /var/www/shopware
 EXPOSE 80 443
 
 CMD ["nginx", "-g", "daemon off;"]

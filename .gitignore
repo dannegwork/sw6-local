@@ -3,5 +3,6 @@
 .docker/nginx/logs
 .docker/php/logs
 .docker/mysql/logs
+.docker/app
 .idea
 src
