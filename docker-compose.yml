@@ -13,13 +13,11 @@ services:
       - ./.docker/nginx/logs:/var/log/nginx
       - app_data
     ports:
-      - 8000:80
+      - 80
     links:
       - php
       - elasticsearch
     tty: true
-    environment:
-      SERVER_NAME: "sw6.local"
     env_file:
       - .env
     networks:
@@ -33,6 +31,7 @@ services:
       - ./.docker/php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./.docker/php/conf/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - ./.docker/php/logs:/var/log/php
+      - ./src:/var/www/shopware
     ports:
       - 9000
     links:

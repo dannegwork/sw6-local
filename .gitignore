@@ -4,3 +4,4 @@
 .docker/php/logs
 .docker/mysql/logs
 .idea
+src

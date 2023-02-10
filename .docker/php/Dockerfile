@@ -8,6 +8,7 @@ ENV WEB_DOCUMENT_ROOT=/var/www/shopware/public
 # install libs according to Magento2 documentation&requirements
 RUN apt-get update && apt-get install -y \
     cron \
+    memcached \
     libmemcached-dev \
     libssl-dev \
     libmemcached11 \
@@ -39,6 +40,7 @@ RUN apt-get update && apt-get install -y \
 RUN pecl channel-update pecl.php.net
 # install xdebug
 RUN pecl install xdebug
+RUN pecl install zip
 
 RUN apt-get install -y git libssh2-1 libssh2-1-dev && \
   pecl install ssh2-1.3.1 && \
@@ -55,18 +57,19 @@ RUN apt-get install -y libbz2-dev \
     && docker-php-ext-install bz2 gd \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd
 
-# Install required extensions
-#RUN docker-php-ext-install pcre pdo phar simplexml sodium xml zip \
-RUN docker-php-ext-install simplexml sodium xml zip && docker-php-ext-enable xdebug
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install intl
 
-# Install and configure libraries and extensions
-RUN docker-php-ext-install pdo_mysql \
-  && docker-php-ext-install pdo_pgsql \
-  && docker-php-ext-configure intl \
-  && docker-php-ext-configure hash --with-mhash
+RUN docker-php-ext-install simplexml sodium xml pdo_mysql pdo_pgsql
+
+# Install required extensions
+RUN git clone https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached \
+ && docker-php-ext-configure /usr/src/php/ext/memcached  --disable-memcached-sasl \
+ && docker-php-ext-install /usr/src/php/ext/memcached \
+ && rm -rf /usr/src/php/ext/memcached
 
 RUN mkdir -p ${NPM_CONFIG_CACHE} \
-    && apt-get install -y default-mysql-client nodejs npm graphviz gnupg2 libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
+    && apt-get install -y default-mysql-client nodejs npm graphviz gnupg2 libgtk2.0-0 libgtk-3-0 zip libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     \
     && npm install -g npm@^6.14.11 \
     && npm i forever -g \
