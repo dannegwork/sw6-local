@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     cron \
     libmemcached-dev \
     libssl-dev \
-    libz-dev \
     libmemcached11 \
     libmcrypt-dev \
     libjpeg62-turbo-dev \
@@ -36,36 +35,11 @@ RUN apt-get update && apt-get install -y \
     libjudy-dev \
     g++
 
-# Install and configure libraries and extensions
-RUN docker-php-ext-install pdo_mysql \
-  && docker-php-ext-install pdo_pgsql \
-  && docker-php-ext-configure intl \
-  && docker-php-ext-configure hash --with-mhash
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd
-
-# Install required extensions
-RUN docker-php-ext-install \
-   curl \
-   dom \
-   fileinfo \
-   gd \
-   iconv \
-   json \
-   libxml \
-   mbstring \
-   openssl \
-   pcre \
-   pdo \
-   phar \
-   simplexml \
-   sodium \
-   xml \
-   zip \
-   zlib
-
 #Installing SSH2
 RUN pecl channel-update pecl.php.net
+# install xdebug
+RUN pecl install xdebug
+
 RUN apt-get install -y git libssh2-1 libssh2-1-dev && \
   pecl install ssh2-1.3.1 && \
   docker-php-ext-enable ssh2
@@ -77,8 +51,22 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
     && make && make install \
     && pecl install -f libsodium
 
+RUN apt-get install -y libbz2-dev \
+    && docker-php-ext-install bz2 gd \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd
+
+# Install required extensions
+#RUN docker-php-ext-install pcre pdo phar simplexml sodium xml zip \
+RUN docker-php-ext-install simplexml sodium xml zip && docker-php-ext-enable xdebug
+
+# Install and configure libraries and extensions
+RUN docker-php-ext-install pdo_mysql \
+  && docker-php-ext-install pdo_pgsql \
+  && docker-php-ext-configure intl \
+  && docker-php-ext-configure hash --with-mhash
+
 RUN mkdir -p ${NPM_CONFIG_CACHE} \
-    && apt-install default-mysql-client nodejs google-chrome-stable libicu-dev graphviz vim gnupg2 libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
+    && apt-get install -y default-mysql-client nodejs npm graphviz gnupg2 libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     \
     && npm install -g npm@^6.14.11 \
     && npm i forever -g \
@@ -94,9 +82,6 @@ ADD ./bin/* /usr/local/bin/
 
 # Get composer installed to /usr/local/bin/composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# install xdebug
-RUN pecl install xdebug
 
 WORKDIR "/var/www/shopware"
 VOLUME "/usr/local/etc/php/conf.d"

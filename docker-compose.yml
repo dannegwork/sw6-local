@@ -4,18 +4,18 @@ networks:
   shopware:
 
 services:
-  app_server:
+  server:
     build: ./.docker/nginx
     container_name: danneg_sw6_nginx
     volumes:
       - ./.docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./.docker/nginx/conf/sites-enabled:/usr/local/bin/nginx/sites-enabled
       - ./.docker/nginx/logs:/var/log/nginx
+      - app_data
     ports:
       - 8000:80
     links:
       - php
-      - app_mysql
       - elasticsearch
     tty: true
     environment:
@@ -37,6 +37,7 @@ services:
       - 9000
     links:
       - app_data
+      - mysql
       - mailhog
     env_file:
       - .env
@@ -45,7 +46,7 @@ services:
     networks:
       - shopware
 
-  app_mysql:
+  mysql:
     build: .docker/mysql
     volumes:
       - ./.docker/mysql/conf/:/etc/mysql/mysql.conf/
@@ -55,15 +56,12 @@ services:
       MYSQL_DATABASE: shopware
       MYSQL_USER: app
       MYSQL_PASSWORD: shopware
-      MYSQL_ROOT_HOST: %
     links:
       - mysql_data
     ports:
       - 3306
     networks:
-      shopware:
-        aliases:
-          - mysql
+      - shopware
 
   mailhog:
     image: mailhog/mailhog
@@ -86,7 +84,6 @@ services:
       - cluster.name=shopware-cluster
       - bootstrap.memory_lock=true
       - "ES_HEAP_SIZE=512m"
-      - "discovery.type=single-node"
       - "MAX_LOCKED_MEMORY=100000"
     ulimits:
       memlock:

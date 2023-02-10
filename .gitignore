@@ -1,3 +1,6 @@
 .docker/database
 .docker/es
+.docker/nginx/logs
+.docker/php/logs
+.docker/mysql/logs
 .idea
