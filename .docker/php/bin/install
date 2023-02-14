@@ -21,7 +21,7 @@ if [ ! -f "$WEB_ROOT/composer.json" ]; then
     git config --global --add safe.directory /var/www/shopware
     composer install
     ./bin/build-js.sh
-    
+
     echo "Go to browser to continue with installation"
 else
     echo "Shopware installation found in $WEB_ROOT, installing composer dependencies"
