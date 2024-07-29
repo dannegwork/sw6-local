@@ -48,7 +48,7 @@ services:
     build: .docker/mysql
     volumes:
       - ./.docker/mysql/conf/:/etc/mysql/mysql.conf/
-      - ./.docker/database/data:/mysql-data
+      - db-local-sw6:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopware
@@ -92,3 +92,6 @@ services:
       - 9200
       - 9300
 
+volumes:
+  db-local-sw6:
+    external: true

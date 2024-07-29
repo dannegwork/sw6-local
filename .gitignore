@@ -6,3 +6,4 @@
 .docker/app
 .idea
 src
+.run
