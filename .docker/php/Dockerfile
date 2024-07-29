@@ -54,7 +54,7 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
     && pecl install -f libsodium
 
 RUN apt-get install -y libbz2-dev \
-    && docker-php-ext-install bz2 gd \
+    && docker-php-ext-install bz2 gd zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd
 
 RUN docker-php-ext-configure intl \
@@ -81,6 +81,9 @@ RUN mkdir -p ${NPM_CONFIG_CACHE} \
 COPY ./conf/php.ini /usr/local/etc/php/conf.d/php.ini
 COPY ./conf/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./conf/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+RUN docker-php-ext-install opcache
+
 ADD ./bin/* /usr/local/bin/
 
 # Get composer installed to /usr/local/bin/composer

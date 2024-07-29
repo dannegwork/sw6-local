@@ -37,6 +37,7 @@ services:
     links:
       - mysql
       - mailhog
+      - memcached
     env_file:
       - .env
     environment:
@@ -65,6 +66,14 @@ services:
       shopware:
         aliases:
           - mailhog
+
+  memcached:
+    image: memcached:1.6
+    container_name: sw6_memcached1.6
+    networks:
+      - shopware
+    ports:
+      - 11211
 
   elasticsearch:
     image: elastic/elasticsearch:7.8.0
