@@ -54,8 +54,8 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
     && pecl install -f libsodium
 
 RUN apt-get install -y libbz2-dev \
-    && docker-php-ext-install bz2 gd zip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --enable-gd \
+    && docker-php-ext-install bz2 gd zip
 
 RUN docker-php-ext-configure intl \
     && docker-php-ext-install intl
